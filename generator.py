@@ -27,13 +27,13 @@ class Operator:
 
 class BinaryArithmeticOperator(Operator):
     def __init__(self, token, instruction):
-        super(BinaryArithmeticOperator, self)
+        Operator.__init__(self, token)
         self.instruction = instruction
 
 
 class RelationalOperator(Operator):
     def __init__(self, token, branch_false_op):
-        super(RelationalOperator, self)
+        Operator.__init__(self, token)
         self.branch_false_op = branch_false_op
 
 
