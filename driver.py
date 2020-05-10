@@ -5,6 +5,7 @@ from fsa import initialize_scanner
 from parser import parser_func
 from tree import print_tree
 from staticsem import semantic_analysis
+from generator import code_generator
 
 
 parser = argparse.ArgumentParser()
@@ -14,6 +15,9 @@ args = parser.parse_args()
 scanner = initialize_scanner(args.path)
 
 tree = parser_func(scanner)
+print_tree(tree)
 
 if semantic_analysis(tree):
     print('PASSED SEMANTIC ANALYSIS')
+
+code_generator('', tree)
