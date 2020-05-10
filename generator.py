@@ -3,9 +3,6 @@ from __future__ import (absolute_import, division,
 # TODO: Replace prints with writing
 # TODO: Refactor ... a bit
 # TODO: Implement:
-# loops
-# ro
-# if
 # parens
 class NameGenerator:
     def __init__(self, variable_prefix='T', label_prefix='L'):
@@ -34,6 +31,12 @@ class Operator:
         self.token = token
 
 
+class BinaryArithmeticOperator(Operator):
+    def __init__(self, token, instruction):
+        super(BinaryArithmeticOperator, self)
+        self.instruction = instruction
+
+
 class RelationalOperator(Operator):
     def __init__(self, token, branch_false_op):
         super(RelationalOperator, self)
@@ -51,6 +54,12 @@ RELATIONAL_OPERATION_MAP = {
     '>>': RelationalOperator('>>', 'BRNEG'),
     '<<': RelationalOperator('<<', 'BRPOS'),
     '<>': RelationalOperator('<>', 'BRZERO'),
+}
+
+BINARY_OPERATION_MAP = {
+    '+': BinaryArithmeticOperator('+', 'ADD'),
+    '*': BinaryArithmeticOperator('*', 'MULT'),
+    '/': BinaryArithmeticOperator('/', 'DIV')
 }
 
 OPERATION_MAP = {
@@ -111,12 +120,12 @@ def code_generator_rec(target_path, node):
             code_generator_rec(target_path, node.children[0])
         # Multiplication or division
         else:
-            operation = OPERATION_MAP[node.tokens[0].payload]
+            operator = BINARY_OPERATION_MAP[node.tokens[0].payload]
             code_generator_rec(target_path, node.children[1])
             temp_var_name = name_generator.make_variable()
             print('STORE {}'.format(temp_var_name))
             code_generator_rec(target_path, node.children[0])
-            print('{} {}'.format(operation, temp_var_name))
+            print('{} {}'.format(operator.instruction, temp_var_name))
         return 
     elif node.label == 'a':
         if len(node.tokens) == 0:
@@ -155,6 +164,27 @@ def code_generator_rec(target_path, node):
             code_generator_rec(target_path, node.children[3])
             print('{}: NOOP'.format(label_name))
         return
+    elif node.label == 'loop':
+        loop_label = name_generator.make_label()
+        print('{}: NOOP'.format(loop_label))
+        break_label = name_generator.make_label()
+        code_generator_rec(target_path, node.children[2])
+        temp_var_name = name_generator.make_variable()
+        print('STORE {}'.format(temp_var_name))
+        code_generator_rec(target_path, node.children[0])
+        print('SUB {}'.format(temp_var_name))
+        relational_operator = node.children[1].tokens[0].payload
+        relational_operation = RELATIONAL_OPERATION_MAP[relational_operator]
+        if relational_operator == '==':
+            print('BRNEG {}'.format(break_label))
+            print('BRPOS {}'.format(break_label))
+            code_generator_rec(target_path, node.children[3])
+        else:
+            label_name = name_generator.make_label()
+            print('{} {}'.format(relational_operation.branch_false_op, break_label))
+            code_generator_rec(target_path, node.children[3])
+        print('BR {}'.format(loop_label))
+        print('{}: NOOP'.format(break_label))
 
 
 def code_generator(target_path, tree):
