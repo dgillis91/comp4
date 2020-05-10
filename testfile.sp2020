@@ -1,3 +1,14 @@
+data x = 1 .
+data y = 2 .
 begin
-  out 1 .
+  in x . 
+  in y . 
+  x = 27 .
+  begin 
+    out x - 1 .
+    y = x / y .
+    x = y * 42 .
+    x = 7 + 4 .
+    x = * y . 
+  end 
 end
