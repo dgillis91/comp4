@@ -1,3 +1,5 @@
+from __future__ import (absolute_import, division,
+                        print_function, unicode_literals)
 # TODO: Replace prints with writing
 # TODO: Refactor ... a bit
 # TODO: Implement:
@@ -27,9 +29,29 @@ class NameGenerator:
         self.variables.append((name, initial_value))
 
 
+class Operator:
+    def __init__(self, token):
+        self.token = token
+
+
+class RelationalOperator(Operator):
+    def __init__(self, token, branch_false_op):
+        super(RelationalOperator, self)
+        self.branch_false_op = branch_false_op
+
+
+
 NO_ACTION_SET = set([
     'program', 'block', 'stats', 'mstat', 'stat'
 ])
+
+RELATIONAL_OPERATION_MAP = {
+    '<': RelationalOperator('<', 'BRZPOS'),
+    '>': RelationalOperator('>', 'BRZNEG'),
+    '>>': RelationalOperator('>>', 'BRNEG'),
+    '<<': RelationalOperator('<<', 'BRPOS'),
+    '<>': RelationalOperator('<>', 'BRZERO'),
+}
 
 OPERATION_MAP = {
     '/': 'DIV',
@@ -111,6 +133,28 @@ def code_generator_rec(target_path, node):
         if len(node.tokens) > 0:
             print('MULT -1')
         return 
+    elif node.label == 'iffy':
+        # Right side of compare
+        code_generator_rec(target_path, node.children[2])
+        temp_var_name = name_generator.make_variable()
+        print('STORE {}'.format(temp_var_name))
+        code_generator_rec(target_path, node.children[0])
+        print('SUB {}'.format(temp_var_name))
+        relational_operator = node.children[1].tokens[0].payload
+        relational_operation = RELATIONAL_OPERATION_MAP[relational_operator]
+        # Requires two branches
+        if relational_operator == '==':
+            label_name = name_generator.make_label()
+            print('BRNEG {}'.format(label_name))
+            print('BRPOS {}'.format(label_name))
+            code_generator_rec(target_path, node.children[3])
+            print('{}: NOOP'.format(label_name))
+        else:
+            label_name = name_generator.make_label()
+            print('{} {}'.format(relational_operation.branch_false_op, label_name))
+            code_generator_rec(target_path, node.children[3])
+            print('{}: NOOP'.format(label_name))
+        return
 
 
 def code_generator(target_path, tree):

@@ -10,5 +10,16 @@ begin
     x = y * 42 .
     x = 7 + 4 .
     x = * y . 
+  iffy [ x < y ] then
+    begin
+      out 5 . 
+      x = 42 .
+    end .
+  y = 0 .
+  iffy [ x >> y ] then
+    out 42 . .
+  x = y .
+  iffy [ x >> y ] then
+    out 100 . .
   end 
 end
