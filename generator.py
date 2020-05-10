@@ -1,4 +1,10 @@
-
+# TODO: Replace prints with writing
+# TODO: Refactor ... a bit
+# TODO: Implement:
+# loops
+# ro
+# if
+# parens
 class NameGenerator:
     def __init__(self, variable_prefix='T', label_prefix='L'):
         self._variable_counter = -1
@@ -22,14 +28,12 @@ class NameGenerator:
 
 
 NO_ACTION_SET = set([
-    'program', 'block', 'stats', 'mstat', 'stat',
-    # Not actually no_action
-    'a', 'm'
+    'program', 'block', 'stats', 'mstat', 'stat'
 ])
 
 OPERATION_MAP = {
     '/': 'DIV',
-    '*': 'MUL'
+    '*': 'MULT'
 }
 
 
@@ -83,6 +87,7 @@ def code_generator_rec(target_path, node):
         # Expands to a
         if len(node.tokens) == 0:
             code_generator_rec(target_path, node.children[0])
+        # Multiplication or division
         else:
             operation = OPERATION_MAP[node.tokens[0].payload]
             code_generator_rec(target_path, node.children[1])
@@ -91,7 +96,21 @@ def code_generator_rec(target_path, node):
             code_generator_rec(target_path, node.children[0])
             print('{} {}'.format(operation, temp_var_name))
         return 
-
+    elif node.label == 'a':
+        if len(node.tokens) == 0:
+            code_generator_rec(target_path, node.children[0])
+        else:
+            code_generator_rec(target_path, node.children[1])
+            temp_var_name = name_generator.make_variable()
+            print('STORE {}'.format(temp_var_name))
+            code_generator_rec(target_path, node.children[0])
+            print('ADD {}'.format(temp_var_name))
+        return
+    elif node.label == 'm':
+        code_generator_rec(target_path, node.children[0])
+        if len(node.tokens) > 0:
+            print('MULT -1')
+        return 
 
 
 def code_generator(target_path, tree):
