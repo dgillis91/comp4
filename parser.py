@@ -48,26 +48,20 @@ def variables():
 def r():
     global tk, scan
     node = TreeNode('r')
-    if tk.payload == '(':
-        node.tokens.append(tk)
-        tk = next(scan)
-        if tk.group == 'id':
-            node.tokens.append(tk)
-            tk = next(scan)
-            if tk.payload == ')':
-                node.tokens.append(tk)
-                tk = next(scan)
-            else:
-                raise ParserError(tk.line_number, tk.identifier, ')', tk.payload)
-        else:
-            raise ParserError(tk.line_number, tk.identifier, 'id', tk.group)
-    elif tk.group == 'id':
+    print(tk)
+    if tk.group in ['digit', 'id']:
         node.tokens.append(tk)
         tk = next(scan)
         return node
-    elif tk.group == 'digit':
+    if tk.payload == '(':
         node.tokens.append(tk)
         tk = next(scan)
+        node.children.append(expr())
+        if tk.payload == ')':
+            node.tokens.append(tk)
+            tk = next(scan)
+        else:
+            raise ParserError(tk.line_number, tk.identifier, ')', tk.payload)
         return node
 
 

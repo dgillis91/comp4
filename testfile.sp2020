@@ -5,6 +5,6 @@ begin
   loop [ x >> 0 ]
   begin
     out x .
-    x = x - 1 .
+    x = ( x - 1 ) .
   end .
 end
