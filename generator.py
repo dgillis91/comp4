@@ -2,8 +2,6 @@ from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 # TODO: Replace prints with writing
 # TODO: Refactor ... a bit
-# TODO: Implement:
-# parens
 class NameGenerator:
     def __init__(self, variable_prefix='T', label_prefix='L'):
         self._variable_counter = -1
@@ -105,10 +103,12 @@ def code_generator_rec(target_path, node):
         print('STORE {}'.format(temp_var_name))
         print('WRITE {}'.format(temp_var_name))
         return
-    # TODO: Add support for parens.
     elif node.label == 'r':
         if node.tokens[0].group in ['digit', 'id']:
             print('LOAD {}'.format(node.tokens[0].payload))
+        # Parens
+        else:
+            code_generator_rec(target_path, node.children[0])
         return 
     elif node.label == 'assign':
         code_generator_rec(target_path, node.children[0])
