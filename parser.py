@@ -48,7 +48,6 @@ def variables():
 def r():
     global tk, scan
     node = TreeNode('r')
-    print(tk)
     if tk.group in ['digit', 'id']:
         node.tokens.append(tk)
         tk = next(scan)
