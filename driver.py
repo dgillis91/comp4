@@ -11,8 +11,11 @@ from writer import StandardOutTargetWriter, FileTargetWriter
 
 parser = argparse.ArgumentParser()
 parser.add_argument('path', help='path to file. do not include ext.')
-parser.add_argument('--std-out', help='Will print to std-out if specified',
+parser.add_argument('--std-out', '-s', help='Will print to std-out if specified',
                     dest='is_std_out', action='store_true')
+parser.add_argument('--target', '-t', help='path to the target file. '
+                    'if --std-out is used, this argument is ignored.',
+                    dest='target', type=str, default=None)
 args = parser.parse_args()
 
 scanner = initialize_scanner(args.path)
@@ -25,6 +28,10 @@ if semantic_analysis(tree):
 if args.is_std_out:
     writer = StandardOutTargetWriter()
 else:
-    writer = FileTargetWriter('file.asm')
+    if args.target is None:
+        filepath = 'file.asm'
+    else:
+        filepath = args.target
+    writer = FileTargetWriter(filepath)
 
 code_generator(writer, tree)
