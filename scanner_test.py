@@ -3,7 +3,7 @@ from readers import FileReader
 from fsa import initialize_scanner
 
 
-scan = initialize_scanner('testfile')
+scan = initialize_scanner(None)
 while True:
     tk = next(scan)
     print(tk)

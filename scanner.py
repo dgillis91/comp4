@@ -6,6 +6,12 @@ from readers import FileReader
 from token import Token
 
 
+try:
+    input = raw_input
+except NameError:
+    pass
+
+
 class Scanner:
     def __init__(self, reader):
         self._reader = reader

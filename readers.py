@@ -12,10 +12,8 @@ class InvalidCommentError(Exception):
     pass
 
 
-class FileReader:
-    def __init__(self, filename):
-        self._filename = filename + DEFAULT_FILE_EXT
-        self._data = None
+class SourceReader:
+    def __init__(self):
         self._line_number = 1
         self._character_index = 0
 
@@ -43,6 +41,19 @@ class FileReader:
         if in_comment:
             raise InvalidCommentError('unclosed comment block')
 
+    def _initialize_data(self):
+        raise NotImplementedError()
+
+    def _get_next(self):
+        raise NotImplementedError()
+
+
+class FileReader(SourceReader):
+    def __init__(self, filename):
+        SourceReader.__init__(self)
+        self._filename = filename + DEFAULT_FILE_EXT
+        self._data = None
+
     def _get_next(self):
         if not self._data:
             self._initialize_data()
@@ -55,3 +66,26 @@ class FileReader:
             self._data = list(input_file.read())
             self._data.append('\n')
             self._data.append('')
+
+
+class KeyboardReader(SourceReader):
+    def __init__(self):
+        SourceReader.__init__(self)
+        self._data = None
+
+    def _get_next(self):
+        if not self._data:
+            self._initialize_data()
+        for char in self._data:
+            yield char
+        yield '\n'
+
+    def _initialize_data(self):
+        self._data = list()
+        while True:
+            try:
+                self._data.extend(t for t in input())
+            except EOFError:
+                break
+        self._data.append('\n')
+        self._data.append('')

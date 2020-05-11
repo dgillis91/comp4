@@ -4,7 +4,7 @@ from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 import string
 from scanner import Scanner
-from readers import FileReader
+from readers import FileReader, KeyboardReader
 
 
 class ParserError(Exception):
@@ -70,8 +70,11 @@ def d_state_transition(character):
         raise ParserError('invalid character in operator: {}'.format(character))
 
 
-def initialize_scanner(source_path):
-    reader = FileReader(source_path)
+def initialize_scanner(source_path=None):
+    if source_path is None:
+        reader = KeyboardReader()
+    else:
+        reader = FileReader(source_path)
     machine = Scanner(reader)
     
     machine.add_state('start', start_state_transition)
