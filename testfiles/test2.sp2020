@@ -1,0 +1,5 @@
+data x = 1 .
+begin
+  read x .
+  out x .
+end

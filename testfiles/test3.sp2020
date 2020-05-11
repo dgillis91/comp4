@@ -1,0 +1,5 @@
+data x = 1 .
+begin
+  x = 10 .
+  out x .
+end

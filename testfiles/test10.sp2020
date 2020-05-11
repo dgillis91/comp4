@@ -1,0 +1,9 @@
+data x = 1 .
+begin
+in x .
+loop [ x > 0 ]
+  begin
+    out x .
+    x = x - 1 .
+  end .
+end

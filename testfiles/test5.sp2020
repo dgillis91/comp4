@@ -1,0 +1,5 @@
+data x = 1 .
+begin
+  in x .
+  out x + 1 - 1 .
+end

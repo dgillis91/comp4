@@ -1,0 +1,7 @@
+data x = 1 .
+begin
+  in x .
+  iffy [ x < 9 / 2 - 4 ] then
+    x = * x . .
+  out x .
+end

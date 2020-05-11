@@ -1,0 +1,5 @@
+data x = 1 .
+begin
+  in x .
+  out x / 5 + * 5 + 2 * ( 2 - 1 ) .
+end

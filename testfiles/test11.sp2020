@@ -1,0 +1,16 @@
+data x = 1 .
+data y = 2 .
+begin
+  in x .
+  loop [ x > 0 ]
+  begin
+    y = x .
+    loop [ y > 0 ]
+    begin
+      out y .
+      y = y - 2 .
+    end .
+    x = x - 1 .
+  end .
+out y .
+end
