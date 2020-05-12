@@ -6,8 +6,10 @@
 - Some of the test files were invalid. Corrected these. 
 
 
-## Usage
+usage: `driver.py [-h] [--path PATH] [--std-out] [--target TARGET] [--debug]`
 
+optional arguments:
+```
   -h, --help            show this help message and exit
   --path PATH, -p PATH  path to file. do not include ext.
   --std-out, -s         Will print to std-out if specified
@@ -15,3 +17,4 @@
                         path to the target file. if --std-out is used, this
                         argument is ignored.
   --debug, -d           if specified, will print tree
+```
